@@ -1,16 +1,26 @@
 #!/usr/bin/env bash
-# Configure your domain zone so that the subdomain www
-get_domain () {
-	domain="$1"
-	subdomain="$2"
-	response=$(dig +short A "$subdomain.$domain")
-	echo "The subdomain $subdomain is a A record and points to $response"
-}
-if [ $# -eq 2 ]; then
-         get_domain "$1" "$2"
-else
-	array=("www" "lb-01" "web-01" "web-02")
-	for subdomain in "${array[@]}"; do
-		get_domain "$1" "$subdomain"
+# Bash script that will display information about subdomains.
+function domain_check {
+	domain_names=("www" "lb-01" "web-01" "web-02")
+
+	for i in "${domain_names[@]}";
+	do
+		dig "${i}"."$1" | grep -A1 'ANSWER SECTION:' | \
+		awk 'FNR == 2 {printf "The subdomain %s is a %s record and points to %s\n", var, $4, $5}' var="$i"
 	done
+}
+
+function subdomain_check {
+	dig "${2}"."$1" | grep -A1 'ANSWER SECTION:' | \
+	awk 'FNR == 2 {printf "The subdomain %s is a %s record and points to %s\n", var, $4, $5}' var="$2"
+}
+
+if [ $# -lt 1 ]
+then
+	echo "*** Provide domain name ***"
+elif [ $# -eq 1 ]
+then
+	domain_check "$1";
+else
+	subdomain_check "$1" "$2";
 fi
