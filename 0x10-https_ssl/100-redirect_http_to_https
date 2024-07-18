@@ -41,7 +41,7 @@ frontend codeignition007-frontend
         default_backend codeignition007-backend
 
 frontend codeignition007-frontend-https
-        bind *:443 ssl crt /etc/haproxy/certs/clickviral.tech.pem
+        bind *:443 ssl crt /etc/haproxy/certs/codeignition007.tech.pem
         http-request set-header X-Forwarded-Proto https
         default_backend codeignition007-backend
 
