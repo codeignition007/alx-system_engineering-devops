@@ -1,37 +1,21 @@
 #!/usr/bin/python3
-"""
-Function to query the Reddit API, return the no
-of subs for a given subreddit. If invalid, returns 0.
-
-Usage:
-    from number_of_subscribers import number_of_subscribers
-
-    subscribers = number_of_subscribers("python")
-    print(f"Subscribers: {subscribers}")
-"""
-
+"""Query Reddit API for number of subscribers on Reddit subreddit."""
 import requests
+from sys import argv
 
 
 def number_of_subscribers(subreddit):
-    """
-    Queries the Reddit API to return no of subs for a subreddit.
-
-    Args:
-        subreddit (str): name of subreddit
-
-    Returns:
-        int: The num of subs if the subreddit exists, otherwise 0.
-    """
-    url = f"https://www.reddit.com/r/{subreddit}/about.json"
-    headers = {'User-Agent': 'MyRedditApp/0.1'}
-
+    '''
+        returns the number of subscribers for a given subreddit
+    '''
+    user = {'User-Agent': 'ernest_b_shong'}
+    url = requests.get('https://www.reddit.com/r/{}/about.json'
+                       .format(subreddit), headers=user).json()
     try:
-        response = requests.get(url, headers=headers, allow_redirects=False)
-        if response.status_code == 200:
-            data = response.json()
-            return data['data']['subscribers']
-        else:
-            return 0
-    except requests.RequestException:
+        return url.get('data').get('subscribers')
+    except Exception:
         return 0
+
+
+if __name__ == "__main__":
+    number_of_subscribers(argv[1])
